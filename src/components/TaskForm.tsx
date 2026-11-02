@@ -1,50 +1,71 @@
 import { useState, type SyntheticEvent } from "react";
-import type { Tarea } from "../types/Tarea";
-
+import type { NuevaTarea } from "../types/Tarea";
+import {
+  Eyebrow,
+  ErrorMessage,
+  FormActions,
+  FormHint,
+  IconButton,
+  ModalHeader,
+  PrimaryButton,
+  SecondaryButton,
+  TaskFormElement,
+  OptionalText,
+} from "../styles";
 type FormularioTareaProps = {
-  onAddTask: (data: Omit<Tarea, "id">) => void;
+  onAddTask: (data: NuevaTarea) => Promise<boolean>;
   onCancel: () => void;
+  error: string | null;
 };
-
 export default function FormularioTarea({
   onAddTask,
   onCancel,
+  error,
 }: FormularioTareaProps) {
   const [titulo, setTitulo] = useState("");
   const [descripcion, setDescripcion] = useState("");
   const [responsable, setResponsable] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  function handleSubmit(event: SyntheticEvent<HTMLFormElement>) {
+  async function handleSubmit(event: SyntheticEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const cleanTitle = titulo.trim();
     const cleanResponsible = responsable.trim();
 
-    if (!cleanTitle || !cleanResponsible) return;
+    if (!cleanTitle || !cleanResponsible || isSubmitting) return;
 
-    onAddTask({
+    setIsSubmitting(true);
+    const created = await onAddTask({
       titulo: cleanTitle,
       descripcion: descripcion.trim(),
       responsable: cleanResponsible,
     });
-  }
+    setIsSubmitting(false);
 
+    if (created) {
+      setTitulo("");
+      setDescripcion("");
+      setResponsable("");
+    }
+  }
+  console.log("Error recibido en TaskForm:", error);
   return (
-    <form className="task-form" onSubmit={handleSubmit}>
-      <div className="modal-header">
+    <TaskFormElement onSubmit={handleSubmit}>
+      <ModalHeader>
         <div>
-          <p className="eyebrow">NUEVO ELEMENTO</p>
+          <Eyebrow>NUEVO ELEMENTO</Eyebrow>
           <h2 id="new-task-title">Nueva tarea</h2>
         </div>
-        <button
-          className="icon-button"
+        <IconButton
           type="button"
           onClick={onCancel}
           aria-label="Cerrar ventana"
         >
           ×
-        </button>
-      </div>
+        </IconButton>
+      </ModalHeader>
+      {error && <ErrorMessage role="alert">{error}</ErrorMessage>}
 
       <label htmlFor="titulo">
         Título <span aria-hidden="true">*</span>
@@ -62,7 +83,7 @@ export default function FormularioTarea({
       />
 
       <label htmlFor="descripcion">
-        Descripción <span className="optional">(opcional)</span>
+        Descripción <OptionalText>(opcional)</OptionalText>
       </label>
       <textarea
         id="descripcion"
@@ -88,19 +109,19 @@ export default function FormularioTarea({
         maxLength={100}
       />
 
-      <p className="form-hint">* Campos obligatorios</p>
-      <div className="form-actions">
-        <button
-          className="button button-secondary"
+      <FormHint>* Campos obligatorios</FormHint>
+      <FormActions>
+        <SecondaryButton
           type="button"
           onClick={onCancel}
+          disabled={isSubmitting}
         >
           Cancelar
-        </button>
-        <button className="button button-primary" type="submit">
-          Guardar tarea
-        </button>
-      </div>
-    </form>
+        </SecondaryButton>
+        <PrimaryButton type="submit" disabled={isSubmitting}>
+          {isSubmitting ? "Guardando..." : "Guardar tarea"}
+        </PrimaryButton>
+      </FormActions>
+    </TaskFormElement>
   );
 }
