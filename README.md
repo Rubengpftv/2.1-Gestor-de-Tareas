@@ -1,32 +1,36 @@
-# React + TypeScript + Vite
+# Gestor de tareas
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Aplicación React + TypeScript + Vite para gestionar tareas sin API ni backend.
 
-Currently, two official plugins are available:
+## Requisitos
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- Node.js compatible con la versión de Vite del proyecto.
+- npm.
 
-## React Compiler
+## Instalación y ejecución
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```bash
+npm install
+npm run dev
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+Vite mostrará la URL local en la terminal.
+
+## Comprobación de producción
+
+```bash
+npm run build
+npm run preview
+```
+
+## Funcionalidades
+
+- Crear tareas con título, descripción opcional y responsable mediante una ventana modal.
+- Validación de título y responsable.
+- Guardado con el botón o con Enter desde los campos de texto.
+- Búsqueda por título sin distinguir mayúsculas y minúsculas.
+- Tarjetas distribuidas con CSS Grid.
+- Contador calculado desde los arrays: tareas visibles frente al total.
+- Mensajes cuando no hay tareas o no hay coincidencias.
+- Eliminación de tareas.
+- Los datos se mantienen en el estado de React durante la sesión; no hay persistencia en una API ni en almacenamiento local.
